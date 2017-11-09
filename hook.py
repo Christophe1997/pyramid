@@ -36,7 +36,7 @@ class Tracker:
                 file_handle.setFormatter(logging.Formatter(self._fmt))
                 self.logger.addHandler(file_handle)
         self.stream_handle = logging.StreamHandler()
-        self.stream_handle.setLevel(level)
+        self.stream_handle.setLevel(logging.INFO)
         self.stream_handle.setFormatter(logging.Formatter(fmt))
         self.logger.addHandler(self.stream_handle)
 
@@ -82,3 +82,33 @@ def hook(path=None, level=logging.DEBUG, fmt=None):
         return wrapper
 
     return decorate
+
+
+def spy(name=None, path=None, level=logging.DEBUG, fmt=None):
+    """Get the logger using in your code direcly.
+
+    :param name: logger name.
+    :param path: file handler path.
+    :param level: logging level, default use logging.DEBUG
+    :param fmt: logging format, default use '%(asctime)s - %(name)s: %(levelname)s\n%(message)s'
+    :return: logger.
+    """
+    if fmt is None:
+        fmt = '%(asctime)s - %(name)s: %(levelname)s\n%(message)s'
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    if path is not None:
+        if not isinstance(path, list):
+            path = [path]
+        for filename in path:
+            file_handle = logging.FileHandler(filename)
+            file_handle.setLevel(level)
+            file_handle.setFormatter(logging.Formatter(fmt))
+            logger.addHandler(file_handle)
+    stream_handle = logging.StreamHandler()
+    stream_handle.setLevel(logging.INFO)
+    stream_handle.setFormatter(logging.Formatter(fmt))
+    logger.addHandler(stream_handle)
+
+    return logger
