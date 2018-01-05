@@ -19,7 +19,9 @@ class Tracker:
     it's a example
     """
 
-    _fmt = '%(asctime)s - %(name)s: %(levelname)s\n%(message)s'
+    _fmt = "Message type:       %(levelname)s\nLocation:           %(pathname)s:%(lineno)d\n" \
+           "Module:             %(module)s\nFunction:           %(funcName)s\n" \
+           "Time:               %(asctime)s\n\nMessage:\n\n%(message)s\n"
 
     def __init__(self, name=None, path=None, level=logging.DEBUG, fmt=None):
         if fmt is None:
@@ -56,6 +58,7 @@ def hook(path=None, level=logging.DEBUG, fmt=None):
     :param level: the logging level, default is logging.DEBUG
     :param fmt: the logging fmt, default use '%(asctime)s - %(name)s: %(levelname)s\n%(message)s'
     """
+
     def decorate(func):
 
         @wraps(func)
