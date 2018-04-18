@@ -51,7 +51,7 @@ class AsciiArt:
             print(f"{image_path} not exist")
             sys.exit(1)
 
-        array = np.ceil((array / 256) * 8) - 1
+        array = np.floor((array / 256) * 8)
         result = []
         for i, line in enumerate(array):
             try:
