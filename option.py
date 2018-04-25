@@ -48,29 +48,30 @@ class Some(Option):
             return f"Some({repr(self._value)})"
 
     @property
-    def isnull(self):
+    def isnil(self):
         return self._value is None
 
     def map(self, f: Callable[[A], B]) -> Option:
-        if self.isnull:
+        if self.isnil:
             return Nil
         else:
             return self.__class__(f(self._value))
 
     def flat_map(self, f: Callable[[A], Option]) -> Option:
-        if self.isnull:
+        if self.isnil:
             return Nil
         else:
             return f(self._value)
 
     def filter(self, f: Callable[[A], bool]) -> Option:
-        if self.isnull or not f(self._value):
+        if self.isnil or not f(self._value):
             return Nil
         else:
             return self
 
     @staticmethod
     def traverse(a: List[A]):
+        """List[A] => Option[List[A]]"""
         def _(f: Callable[[A], Option]):
             return reduce(lambda t, h: t.map2(f(h))(lambda x, y: x + [y]), a, Some([]))
 
@@ -78,19 +79,24 @@ class Some(Option):
 
     @staticmethod
     def sequence(a: List[A]):
+        """List[A] => Option[List[A]]"""
         return Some.traverse(a)(lambda x: x)
 
     def get_or_else(self, default: B) -> A:
-        if self.isnull:
+        if self.isnil:
             return default
         else:
             return self._value
 
     def or_else(self, b: Option) -> Option:
-        if self.isnull:
+        if self.isnil:
             return b
         else:
             return self
+
+    def if_present(self, func: Callable[[A]]):
+        if not self.isnil:
+            func(self._value)
 
 
 Nil = Some()
