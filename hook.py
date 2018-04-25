@@ -97,7 +97,7 @@ def spy(name=None, path=None, level=logging.DEBUG, fmt=None):
     :return: logger.
     """
     if fmt is None:
-        fmt = '%(asctime)s - %(name)s: %(levelname)s\n%(message)s'
+        fmt = '[**%(asctime)s** ::::::::::: **%(name)s**][%(levelname)s]: %(message)s'
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 
