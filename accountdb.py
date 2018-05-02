@@ -1,5 +1,20 @@
 #! /usr/bin/env python3
 
+"""Storage your account with AES
+Dependence:
+- sqlalchemy
+- Crypto
+- fire
+- termcolor
+Usage:
+- python accountdb add ${YOUR_Account} --username=${USERNAME} --password=${PASSWORD}
+
+or you would like download the releases script accountdb and move it to your bin directory, them
+- chmod +x accountdb
+- change the DEFAULT_DATABASE_URL to a absolute path like "sqlite:////home/christophe/bin"
+- then you can use anywhere with command accountdb
+"""
+
 from randomf import Randomf
 from aes import AESCipher
 from sqlalchemy import Column, String, Binary
@@ -8,6 +23,7 @@ from termcolor import colored
 import fire
 
 aes_cipher = AESCipher("3.1415926")
+
 
 class Account(Base):
     __tablename__ = 'account'
@@ -21,13 +37,14 @@ class Account(Base):
     def __repr__(self):
         return (f"ACCOUNT:    {self.account or 'NOTHING'}\n"
                 f"USERNAME:   {self.username or 'NOTHING'}\n"
-                f"PASSWORD:   {self.decrypt(self.password) or 'NOTHING'}\n"
+                f"PASSWORD:   {self.decrypt}\n"
                 f"PHONE:      {self.phone or 'NOTHING'}\n"
                 f"EMAIL:      {self.email or 'NOTHING'}\n"
                 f"DETAILS:    {repr(self.tag) if self.tag is not None else 'NOTHING'}")
 
-    def decrypt(self, enc):
-        return aes_cipher.decrypt(enc)
+    @property
+    def decrypt(self):
+        return aes_cipher.decrypt(self.password)
 
 
 class AccountDB:
@@ -42,7 +59,7 @@ class AccountDB:
         new_account = Account(
             account=account,
             username=username,
-            password=self.encrypt(password),
+            password=self.encrypt(password or 'NOTHING'),
             phone=phone,
             email=email,
             tag=tag)
@@ -67,6 +84,8 @@ class AccountDB:
 
     def find(self, account, field=None):
         account = Account.query.filter_by(account=account).first()
+        if field == 'password':
+            return account.decrypt
         return getattr(account, field) if field is not None else repr(account)
 
     def find_by(self, username=None, password=None, phone=None, email=None, tag=None):
