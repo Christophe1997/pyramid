@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-"""Storage your account with AES
+"""Storage your account with AES, require Python 3.6 or higher
 Dependence:
 - sqlalchemy
 - Crypto
@@ -15,10 +15,10 @@ or you would like download the releases script accountdb and move it to your bin
 - then you can use anywhere with command accountdb
 """
 
-from randomf import Randomf
-from aes import AESCipher
+from utils.randomf import Randomf
+from utils.aes import AESCipher
 from sqlalchemy import Column, String, Binary
-from sqlalchemy_toolkit import Base, init_db
+from utils.sqlalchemy_toolkit import Base, init_db
 from termcolor import colored
 import fire
 
