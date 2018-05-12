@@ -88,6 +88,10 @@ class AccountDB:
             return account.decrypt
         return getattr(account, field) if field is not None else repr(account)
 
+    def ls(self):
+        for row in self.session.query(Account.account):
+            print(row.account)
+
     def find_by(self, username=None, password=None, phone=None, email=None, tag=None):
         kwarg = {}
         if username is not None:
